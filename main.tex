@@ -1,0 +1,142 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+\documentclass[journal]{IEEEtran}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% add line number
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[mathlines,switch]{lineno}
+\newcommand*\patchAmsMathEnvironmentForLineno[1]{%
+	\expandafter\let\csname old#1\expandafter\endcsname\csname #1\endcsname
+	\expandafter\let\csname oldend#1\expandafter\endcsname\csname end#1\endcsname
+	\renewenvironment{#1}%
+	{\linenomath\csname old#1\endcsname}%
+	{\csname oldend#1\endcsname\endlinenomath}}% 
+\newcommand*\patchBothAmsMathEnvironmentsForLineno[1]{%
+	\patchAmsMathEnvironmentForLineno{#1}%
+	\patchAmsMathEnvironmentForLineno{#1*}}%
+\AtBeginDocument{%7
+	\patchBothAmsMathEnvironmentsForLineno{equation}%
+	\patchBothAmsMathEnvironmentsForLineno{align}%
+	\patchBothAmsMathEnvironmentsForLineno{flalign}%
+	\patchBothAmsMathEnvironmentsForLineno{alignat}%
+	\patchBothAmsMathEnvironmentsForLineno{gather}%
+	\patchBothAmsMathEnvironmentsForLineno{multline}%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{header}
+
+
+\newcommand{\refgarage}{\cref{fig::outlier_garage}}
+\newcommand{\figgarage}{\input{fig_garage}}
+
+
+\newcommand{\refbenchmark}[2]{\cref{fig::benchmark3D,fig::benchmark2D}}
+\newcommand{\figbenchmark}{\input{fig_benchmark}}
+\newcommand{\datasetinfo}{\hyperapp{appendix::L}{L}}
+
+%\newcommand{\hyperapp}[2]{Appendix \hyperref[{#1}]{#2}}
+%\newcommand{\inputapp}{\input{appendix}}
+%\def\highlight{}
+
+\newcommand{\hyperapp}[2]{\cite[Appendix {#2}]{fan2021mm_full}}
+\newcommand{\inputapp}{}
+\def\highlight{}
+
+
+
+
+%\newcommand{\datasetinfo}{\cref{table::dataset}}
+
+\IEEEoverridecommandlockouts                              % This command is only needed if 
+% you want to use the \thanks command
+
+%\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+\title{\LARGE \bf Majorization Minimization Methods for Distributed Pose Graph Optimization}
+
+\author{Taosha Fan and Todd D. Murphey
+	\thanks{T. Fan is with Meta AI, Pittsburgh, PA 15213, USA and T. D. Murphey is with the Department of Mechanical Engineering, Northwestern University, Evanston, IL 60201, USA. E-mail: {\tt taoshaf@meta.com, t-murphey@northwestern.edu}
+		
+		This material is partially based upon work supported by the National Science Foundation under awards 1662233 and 1837515. 
+		
+		The authors thank Yulun Tian for sharing the code of Riemannian block coordinate descent method ($\rbcd$) for distributed PGO.
+	}
+}
+
+\begin{document}
+	\maketitle
+	\thispagestyle{empty}
+	\pagestyle{empty}
+	
+	%\linenumbers
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{abstract}
+		We consider the problem of distributed pose graph optimization (PGO) that has important applications in multi-robot simultaneous localization and mapping (SLAM). We propose the majorization minimization (MM) method for distributed PGO ($\mm$) that applies to a broad class of robust loss kernels. The $\mm$ method is guaranteed to converge to first-order critical points under mild conditions. Furthermore, noting that the $\mm$ method is reminiscent of {\highlight proximal methods}, we leverage Nesterov's method and adopt adaptive restarts to accelerate convergence. The resulting accelerated MM methods for distributed PGO---both with a master node in the network ($\ammc$) and without ($\ammd$)---have faster convergence in contrast to the $\mm$ method without sacrificing theoretical guarantees. In particular, the $\ammd$ method, which needs no master node and is fully decentralized, features a novel adaptive restart scheme and has a rate of convergence comparable to that of the $\ammc$ method using a master node to aggregate information from all the nodes. The efficacy of this work is validated through extensive applications to 2D and 3D SLAM benchmark datasets and comprehensive comparisons against existing state-of-the-art methods, indicating that our MM methods converge faster and result in better solutions to distributed PGO.  The code is available at \url{https://github.com/MurpheyLab/DPGO}.
+	\end{abstract}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\vspace{-0.25em}
+	\section{Introduction}\label{section::intro}
+	\input{intro}
+	
+	\vspace{-0.25em}
+	\section{Related Work}\label{section::work}
+	\input{related_work}
+	
+	\vspace{-0.2em}
+	\section{Notation\protect\footnote{A more complete summary of the notation  is given in \hyperapp{appendix::A}{A}. }}\label{section::notation}
+	\input{notation}
+	
+	\section{Problem Formulation}\label{section::problem}
+	\input{problem}
+	
+	\section{The Majorization of Loss Kernels}\label{section::loss}
+	\input{loss_kernels}
+	
+	\section{The Majorization of Distributed Pose Graph Optimization}\label{section::major_pgo}
+	\input{major_pgo}
+	
+	\section{The Majorization Minimization Method for Distributed Pose Graph Optimization}\label{section::mm}
+	\input{mm_pgo}
+	
+	\section{The Accelerated Majorization Minimization Method for Distributed Pose Graph Optimization with Master Node}\label{section::ammc}
+	\input{amm_pgo_c}
+	
+	\section{The Accelerated Majorization Minimization Method for Distributed Pose Graph Optimization without Master Node}\label{section::amm}
+	\input{amm_pgo}
+	
+	\section{Experiments}\label{section::experiemnt}
+	\input{experiments}
+	
+	\section{Conclusion and Future Work}\label{section::conclusion}
+	\input{conclusions}
+	
+	\vspace{-0.25em}
+	
+	\bibliographystyle{IEEEtran}
+	\bibliography{mybib}
+	
+	\vspace{-1.5em}
+	
+	\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figures/fan.png}}]{Taosha Fan}
+		received his B.E. degree in automotive engineering from Tongji University, Shanghai, China, in 2013, and M.S. degrees in mechanical engineering and mathematics from Johns Hopkins University, Baltimore, MD, USA, in 2015, and Ph.D. degree in mechanical engineering at Northwestern University, Evanston, IL, USA in 2022. His research interests lie at the intersection of robotic control, simulation and estimation. He is currently a research engineer in Meta AI, Pittsburgh, PA, USA.
+	\end{IEEEbiography}
+	
+	\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{figures/murphey.png}}]{Todd Murphey}
+		received his B.S. degree in mathematics from the University of Arizona and the Ph.D. degree in Control and Dynamical Systems from the California Institute of Technology.
+		
+		He is currently a Professor of mechanical engineering with Northwestern University, Evanston, IL, USA. His laboratory is part of the Center for Robotics and Biosystems. His research interests include robotics, control, machine learning in physical systems, and computational neuroscience
+	\end{IEEEbiography}
+	
+	%\input{appendix}
+	
+	
+	
+	
+	
+	%\input{appendix}
+\end{document}
